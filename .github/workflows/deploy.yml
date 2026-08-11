@@ -36,6 +36,11 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+    # deploy-pages calls the Pages deployment API over TLS using Node's own bundled CA list, which
+    # doesn't trust the cert -- the runner OS's own CA store does. --use-system-ca is the fix Node
+    # itself suggests in the resulting "self-signed certificate" error.
+    env:
+      NODE_OPTIONS: --use-system-ca
     steps:
       - uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5.0.0
         id: deployment
