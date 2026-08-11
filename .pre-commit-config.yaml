@@ -1,0 +1,18 @@
+# Minimal code-hygiene hooks, mirroring identigon/identigon's own .pre-commit-config.yaml --
+# trimmed to what applies to a static site, not a Gradle/Java build. Run with `prek` or
+# `pre-commit`.
+repos:
+  # Secret scanning -- apt for a repo that will eventually link out to, and quote from, a privacy
+  # pipeline where a salt or connection string must never be committed.
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.21.2
+    hooks:
+      - id: gitleaks
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-added-large-files
