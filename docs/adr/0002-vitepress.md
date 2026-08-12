@@ -4,19 +4,19 @@ Status: accepted (2026-08-11)
 
 ## Context
 
-The site needs to grow from a single landing page into hand-written guide content (Getting
-Started, About/architecture, eventually more) without becoming hard to maintain. Candidates
-considered: plain static HTML/CSS (no build step, but no templating/layouts once there's more than
-a couple of pages), Jekyll (GitHub Pages' native option — zero-config, no Actions workflow needed
-— but Ruby-based and increasingly dated), and a modern static site generator.
+The site needs to grow from a single landing page into hand-written guide content (Getting Started,
+About/architecture, eventually more) without becoming hard to maintain. Candidates considered: plain
+static HTML/CSS (no build step, but no templating/layouts once there's more than a couple of pages),
+Jekyll (GitHub Pages' native option — zero-config, no Actions workflow needed — but Ruby-based and
+increasingly dated), and a modern static site generator.
 
 ## Decision
 
 [VitePress](https://vitepress.dev/): Markdown-first content, matching how every other doc in this
 project (`SPECIFICATION.md`, ADRs, `PLAN.md`) is already written; a built-in "home" layout for the
 landing page; and a reasonable out-of-the-box docs theme (nav, sidebar) for when the guide content
-grows. Unlike Jekyll, it has no native GitHub Pages support, so a GitHub Actions workflow builds
-and deploys it (`.github/workflows/deploy.yml`).
+grows. Unlike Jekyll, it has no native GitHub Pages support, so a GitHub Actions workflow builds and
+deploys it (`.github/workflows/deploy.yml`).
 
 ## Consequences
 

@@ -7,7 +7,7 @@ Conventions: numbered `NNNN-kebab-title.md`, never renumbered; `Status:` one of 
 `accepted` / `superseded by ADR NNNN`, with the date. A decision that reverses an ADR adds a new ADR
 and marks the old one superseded rather than editing it.
 
-| ADR | Decision |
-| :--- | :--- |
+| ADR                                              | Decision                                                                           |
+| :----------------------------------------------- | :--------------------------------------------------------------------------------- |
 | [0001](0001-separate-repo-not-a-subdirectory.md) | A separate `identigon.github.io` repo, not a subdirectory of `identigon/identigon` |
-| [0002](0002-vitepress.md) | VitePress as the site generator |
+| [0002](0002-vitepress.md)                        | VitePress as the site generator                                                    |

@@ -1,6 +1,6 @@
 # identigon.github.io
 
-Source for the [Identigon](https://identigon.github.io) project site, built with
+Source for the [Identigon](https://identigon.org) project site, built with
 [VitePress](https://vitepress.dev/).
 
 The actual `alterego` / `incognito` / `effigies` code lives in
@@ -24,5 +24,5 @@ npm run docs:build
 npm run docs:preview
 ```
 
-Publishing to GitHub Pages happens automatically via `.github/workflows/deploy.yml` on every push
-to `main`.
+Publishing to GitHub Pages happens automatically via `.github/workflows/deploy.yml` on every push to
+`main`.

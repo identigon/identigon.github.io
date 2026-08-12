@@ -2,6 +2,15 @@
 # trimmed to what applies to a static site, not a Gradle/Java build. Run with `prek` or
 # `pre-commit`.
 repos:
+  - repo: local
+    hooks:
+      - id: prettier-format
+        name: Prettier (auto-format Markdown)
+        language: system
+        entry: npx prettier --write
+        pass_filenames: true
+        types: [markdown]
+
   # Secret scanning -- apt for a repo that will eventually link out to, and quote from, a privacy
   # pipeline where a salt or connection string must never be committed.
   - repo: https://github.com/gitleaks/gitleaks

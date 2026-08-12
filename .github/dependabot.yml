@@ -1,0 +1,13 @@
+# Keep dependency versions current: npm for the VitePress site toolchain, github-actions for the
+# pinned SHAs (with their trailing `# vX.Y.Z` comments) in .github/workflows/deploy.yml.
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"

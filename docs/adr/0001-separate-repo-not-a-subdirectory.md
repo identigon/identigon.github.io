@@ -16,10 +16,10 @@ Use a dedicated `identigon/identigon.github.io` repo. The clean root URL is the 
 it's specifically what that special repo name is for, and meaningfully better for a public front
 door than a `/identigon/` path suffix.
 
-Generated reference material (Javadoc, etc.) is **not** duplicated into this repo. It is expected
-to be built and published from `identigon/identigon`'s own CI, tied to its release cadence, and
-linked to from here — keeping exactly one source of truth for anything derived from the code,
-rather than two repos that can drift out of sync.
+Generated reference material (Javadoc, etc.) is **not** duplicated into this repo. It is expected to
+be built and published from `identigon/identigon`'s own CI, tied to its release cadence, and linked
+to from here — keeping exactly one source of truth for anything derived from the code, rather than
+two repos that can drift out of sync.
 
 ## Consequences
 

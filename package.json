@@ -5,9 +5,12 @@
   "scripts": {
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
-    "docs:preview": "vitepress preview docs"
+    "docs:preview": "vitepress preview docs",
+    "format": "prettier --write \"**/*.md\"",
+    "format:check": "prettier --check \"**/*.md\""
   },
   "devDependencies": {
+    "prettier": "^3.9.6",
     "vitepress": "^1.6.4"
   }
 }

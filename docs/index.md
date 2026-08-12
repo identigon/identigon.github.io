@@ -4,7 +4,9 @@ layout: home
 hero:
   name: "Identigon"
   text: "Anonymise a database, credibly."
-  tagline: Deterministic pseudonymisation and privacy-preserving database cloning — for test, staging, and demo environments that need real-looking data without real PII.
+  tagline:
+    Deterministic pseudonymisation and privacy-preserving database cloning — for test, staging, and
+    demo environments that need real-looking data without real PII.
   actions:
     - theme: brand
       text: View on GitHub
@@ -14,10 +16,20 @@ hero:
       link: /getting-started
 
 features:
-  - title: alterego
-    details: A zero-dependency Java library for deterministic pseudonymisation — fabricate clearly fictional, reproducible values from real ones.
-  - title: incognito
-    details: Clones a production database into a schema-identical test database with all PII replaced by clearly fictional data, preserving data volumes and inter-entity relationships.
-  - title: effigies
-    details: An authoring and orchestration CLI that discovers schemas, scaffolds declarative policies, and drives incognito to anonymise databases.
+  - title: Fail-closed by default
+    details:
+      Every column must resolve to an explicit role before a run starts. Nothing is ever silently
+      copied through unclassified, inference only ever suggests.
+  - title: Deterministic & reproducible
+    details:
+      The same source value and salt always fabricate to the same fictional value — no randomness,
+      no drift between runs, byte-for-byte repeatable when you need it to be.
+  - title: Guaranteed-fictional output
+    details:
+      Fabricated values land in officially reserved or structurally-impossible ranges wherever one
+      exists, so the result doesn't just look fake — it fails a real lookup.
+  - title: Built-in accountability
+    details:
+      Every run emits a DPIA report (HTML, JSON, and Markdown) recording what changed and why, so a
+      classification never has to be trusted blind.
 ---
