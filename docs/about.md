@@ -66,7 +66,8 @@ resolve to an explicit role before a run starts. Auto-inference — whether a re
 agent — only ever _suggests_ a role into the authoring artifact; it never assigns one on its own. An
 unclassified column aborts the run, every time, even with inference switched on. A brand-new column
 appearing in the source will break a previously-passing policy until someone classifies it —
-deliberately: that's the mechanism, not a bug.
+deliberately: that's the mechanism, not a bug. See
+[Getting Started](/getting-started#_3-author-the-policy) for what that looks like in practice.
 
 ## No model in the engine path
 

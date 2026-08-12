@@ -9,7 +9,10 @@ instead of the CLI, more docs are coming; for now, see the READMEs in the
 ## Prerequisites
 
 - Java 25
-- A source database to anonymise, and a schema-identical target database to clone into
+- A source database to anonymise, and a schema-identical target database to clone into —
+  **PostgreSQL is what's actually tested and tuned today** (batch optimisation, sequence reset,
+  FK/trigger isolation). Other JDBC-accessible databases can be reached through a generic-ANSI
+  fallback path, but it's untested — treat it as "might work," not "supported."
 - A clone of [identigon/identigon](https://github.com/identigon/identigon), built with
   `./gradlew build` — this produces a single runnable jar, `identigon.jar` (under
   `effigies/build/libs/`)
@@ -93,7 +96,8 @@ classify those explicitly (`PRIMARY_KEY` / `FOREIGN_KEY`); nothing here is assum
 
 **Why:** this is the step where the actual privacy judgment happens — deciding what each column
 _is_. It's deliberately a human decision (optionally assisted): the run refuses to start until every
-column has an explicit role, so nothing new in the source can slip through unclassified.
+column has an explicit role, so nothing new in the source can slip through unclassified — see
+[Fail-closed, always](/about#fail-closed-always) for why that's a hard rule, not a default.
 
 Identigon ships an Agent Skill (`.agents/skills/identigon-policy-author/SKILL.md`) that AI
 assistants — Claude, Antigravity, Copilot, and similar — can use to interview you and fill in the
