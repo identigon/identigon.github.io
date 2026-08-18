@@ -6,6 +6,12 @@ schema-identical, PII-free clone. If you want to work directly with the lower-le
 instead of the CLI, more docs are coming; for now, see the READMEs in the
 [monorepo](https://github.com/identigon/identigon).
 
+The schema used below (`CUSTOMER`/`ORDERS`) is illustrative, to keep each step's output short. For a
+small, real, copy-pasteable schema you can run through every step yourself right now — DDL, seed
+data, and a finished `policy.yaml` included — see
+[`effigies/examples/quickstart/`](https://github.com/identigon/identigon/tree/main/effigies/examples/quickstart)
+in the monorepo.
+
 ## Prerequisites
 
 - Java 25
@@ -32,7 +38,7 @@ java -jar build/libs/identigon.jar discover \
 **Produces:** a human-readable summary printed to stdout — nothing is written to a file. Each table,
 with every column annotated by type and, where relevant, `pk` / `fk -> <table>`:
 
-```
+```text
 Table: CUSTOMER
   ID (type: BIGINT, pk)
   FIRST_NAME (type: VARCHAR)
@@ -158,7 +164,7 @@ Credentials and salt bytes come from the environment, never from the policy file
 **Produces:** the anonymised clone, loaded into the target database — plus a short summary and three
 DPIA report files written to the working directory:
 
-```
+```text
 Starting anonymisation pipeline (Salt Mode: ephemeral)...
 Pipeline completed successfully.
 Tables transformed: 2
