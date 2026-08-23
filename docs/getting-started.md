@@ -9,7 +9,7 @@ instead of the CLI, more docs are coming; for now, see the READMEs in the
 The schema used below (`CUSTOMER`/`ORDERS`) is illustrative, to keep each step's output short. For a
 small, real, copy-pasteable schema you can run through every step yourself right now — DDL, seed
 data, and a finished `policy.yaml` included — see
-[`effigies/examples/quickstart/`](https://github.com/identigon/identigon/tree/main/effigies/examples/quickstart)
+[`quickstart/`](https://github.com/identigon/identigon/tree/main/quickstart)
 in the monorepo.
 
 ## Prerequisites
