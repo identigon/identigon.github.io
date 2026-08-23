@@ -1,5 +1,12 @@
-node_modules/
+*.iml
+*.ipr
+*.iws
+.DS_Store
+.factorypath
+.idea/
+.project
+.settings/
+build/
 docs/.vitepress/cache/
 docs/.vitepress/dist/
-.DS_Store
-CLAUDE.md
+node_modules/
