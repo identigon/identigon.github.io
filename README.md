@@ -54,22 +54,6 @@ a small, standard workflow.
 
 ## Roadmap
 
-- **Getting Started's example schema (`CUSTOMER`/`ORDERS`) reads as literal SQL, but Postgres folds
-  unquoted identifiers to lower case.** A reader following along against a real database gets
-  `customer`/`orders` and must lower-case policy keys to match. State that explicitly near the
-  schema intro, or switch the example to lower case — the in-repo `quickstart/` walkthrough
-  (`identigon/identigon`) already uses lower case, so there'd be nothing left to reconcile between
-  the two.
-- **State the salt's 16-byte minimum in the "Salt modes" table.** `IDENTIGON_SALT`
-  (`persistent`/`reproducible` modes) must be at least 16 bytes; the page's own example
-  (`"my-secret-salt-bytes"`) happens to clear it at 20 bytes, but the requirement itself isn't
-  written down anywhere on the page. Pairs with a code-side fix tracked in `identigon/identigon`'s
-  `PLAN.md` (`RunCommand` currently only fails on this mid-pipeline, not up front).
-- **Explain how to produce the schema-identical target database.** The prerequisites list one as a
-  requirement but never say how to make it. `pg_dump --schema-only --no-owner --no-privileges` is
-  the answer for the supported engine (PostgreSQL) — worth stating explicitly, since getting it
-  wrong by omitting `--schema-only` is silently catastrophic: `run` loads *into* the target rather
-  than replacing it.
 - **Link the role vocabulary, once `identigon/identigon` publishes it as a docs page** (tracked
   there). Today "see the role vocabulary" in the scaffold-output example (Getting Started §2/§3)
   points at nothing public — `ColumnRole`'s nine usable values and five reserved-and-fail-fast

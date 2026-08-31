@@ -6,9 +6,10 @@ schema-identical, PII-free clone. If you want to work directly with the lower-le
 instead of the CLI, more docs are coming; for now, see the READMEs in the
 [monorepo](https://github.com/identigon/identigon).
 
-The schema used below (`CUSTOMER`/`ORDERS`) is illustrative, to keep each step's output short. For a
-small, real, copy-pasteable schema you can run through every step yourself right now — DDL, seed
-data, and a finished `policy.yaml` included — see
+The schema used below (`customer`/`orders`, lower case — Postgres folds unquoted identifiers to
+lower case, so that's what you'll see even if you write `CREATE TABLE CUSTOMER`) is illustrative, to
+keep each step's output short. For a small, real, copy-pasteable schema you can run through every
+step yourself right now — DDL, seed data, and a finished `policy.yaml` included — see
 [`quickstart/`](https://github.com/identigon/identigon/tree/main/quickstart)
 in the monorepo.
 
@@ -18,7 +19,14 @@ in the monorepo.
 - A source database to anonymise, and a schema-identical target database to clone into —
   **PostgreSQL is what's actually tested and tuned today** (batch optimisation, sequence reset,
   FK/trigger isolation). Other JDBC-accessible databases can be reached through a generic-ANSI
-  fallback path, but it's untested — treat it as "might work," not "supported."
+  fallback path, but it's untested — treat it as "might work," not "supported." For PostgreSQL,
+  produce the target with `pg_dump --schema-only --no-owner --no-privileges`, then load that into an
+  empty database — leaving out `--schema-only` is silently catastrophic, since `run` loads *into*
+  the target rather than replacing it:
+  ```sh
+  pg_dump --schema-only --no-owner --no-privileges -d source_db > schema.sql
+  psql -d target_db -f schema.sql
+  ```
 - A clone of [identigon/identigon](https://github.com/identigon/identigon), built with
   `./gradlew build` — this produces a single runnable jar, `identigon.jar` (under
   `effigies/build/libs/`)
@@ -39,17 +47,17 @@ java -jar build/libs/identigon.jar discover \
 with every column annotated by type and, where relevant, `pk` / `fk -> <table>`:
 
 ```text
-Table: CUSTOMER
-  ID (type: BIGINT, pk)
-  FIRST_NAME (type: VARCHAR)
-  EMAIL (type: VARCHAR)
-  POSTCODE (type: VARCHAR)
+Table: customer
+  id (type: BIGINT, pk)
+  first_name (type: VARCHAR)
+  email (type: VARCHAR)
+  postcode (type: VARCHAR)
 
-Table: ORDERS
-  ID (type: BIGINT, pk)
-  CUSTOMER_ID (type: BIGINT, fk -> CUSTOMER)
-  TOTAL (type: NUMERIC)
-  CREATED_AT (type: TIMESTAMP)
+Table: orders
+  id (type: BIGINT, pk)
+  customer_id (type: BIGINT, fk -> customer)
+  total (type: NUMERIC)
+  created_at (type: TIMESTAMP)
 ```
 
 ## 2. Scaffold a policy
@@ -72,29 +80,29 @@ did:
 ```yaml
 autoInfer: false
 tables:
-  CUSTOMER:
+  customer:
     columns:
-      ID: # type: BIGINT, pk
+      id: # type: BIGINT, pk
         role: # TODO classify — see the role vocabulary; run fails closed until filled
-      FIRST_NAME: # type: VARCHAR
+      first_name: # type: VARCHAR
         role: # TODO classify (Suggestion: DIRECT_ID based on NAME_PATTERN)
-      EMAIL: # type: VARCHAR
+      email: # type: VARCHAR
         role: # TODO classify (Suggestion: DIRECT_ID based on EMAIL_PATTERN)
-      POSTCODE: # type: VARCHAR
+      postcode: # type: VARCHAR
         role: # TODO classify (Suggestion: QUASI_ID based on POSTCODE_PATTERN)
-  ORDERS:
+  orders:
     columns:
-      ID: # type: BIGINT, pk
+      id: # type: BIGINT, pk
         role: # TODO classify — see the role vocabulary; run fails closed until filled
-      CUSTOMER_ID: # type: BIGINT, fk -> CUSTOMER
+      customer_id: # type: BIGINT, fk -> customer
         role: # TODO classify — see the role vocabulary; run fails closed until filled
-      TOTAL: # type: NUMERIC
+      total: # type: NUMERIC
         role: # TODO classify — see the role vocabulary; run fails closed until filled
-      CREATED_AT: # type: TIMESTAMP
+      created_at: # type: TIMESTAMP
         role: # TODO classify — see the role vocabulary; run fails closed until filled
 ```
 
-Note that `ID` and `CUSTOMER_ID` get no suggestion, even though they're structurally a primary key
+Note that `id` and `customer_id` get no suggestion, even though they're structurally a primary key
 and a foreign key — the heuristics only look at column _names_, not constraints. You still have to
 classify those explicitly (`PRIMARY_KEY` / `FOREIGN_KEY`); nothing here is assumed for you.
 
@@ -118,25 +126,25 @@ config with nothing left blank:
 ```yaml
 autoInfer: false
 tables:
-  CUSTOMER:
+  customer:
     columns:
-      ID:
+      id:
         role: PRIMARY_KEY
-      FIRST_NAME:
+      first_name:
         role: DIRECT_ID
-      EMAIL:
+      email:
         role: DIRECT_ID
-      POSTCODE:
+      postcode:
         role: QUASI_ID
-  ORDERS:
+  orders:
     columns:
-      ID:
+      id:
         role: PRIMARY_KEY
-      CUSTOMER_ID:
+      customer_id:
         role: FOREIGN_KEY
-      TOTAL:
+      total:
         role: PAYLOAD
-      CREATED_AT:
+      created_at:
         role: PAYLOAD
 ```
 
@@ -195,4 +203,6 @@ handful of illustrative synthetic sample rows, so nobody has to trust the run bl
 | `persistent`          | A fixed, caller-supplied salt (`IDENTIGON_SALT`). Repeatable across runs, but linkable — forfeits irreversibility.                                          |
 | `reproducible`        | A fixed salt and RNG seed (`IDENTIGON_SEED`). Byte-for-byte identical output on every run — for test fixtures.                                              |
 
-The salt is never logged, and never appears in the policy file itself.
+`IDENTIGON_SALT` must be at least 16 bytes for `persistent` and `reproducible` modes (the
+`"my-secret-salt-bytes"` example above is 20 bytes, comfortably over). The salt is never logged, and
+never appears in the policy file itself.
