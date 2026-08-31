@@ -78,7 +78,6 @@ suggestion in the comment where a heuristic matched, a pointer to the role vocab
 did:
 
 ```yaml
-autoInfer: false
 tables:
   customer:
     columns:
@@ -124,7 +123,6 @@ plain declarative file.
 config with nothing left blank:
 
 ```yaml
-autoInfer: false
 tables:
   customer:
     columns:

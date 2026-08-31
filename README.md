@@ -54,6 +54,13 @@ a small, standard workflow.
 
 ## Roadmap
 
+- **Document the new `validate` command in Getting Started.** `identigon/identigon` added
+  `identigon validate --policy ./policy.yaml --source-url ... --source-user ...`: checks a policy
+  against the source schema with no target connection and no data movement, using the same
+  fail-closed diagnostics `run` would raise. Getting Started's workflow (§1-3) only walks through
+  `discover` → `scaffold` → `run` today; `validate` fits as a cheap pre-flight step between
+  authoring the policy (§3) and running it (§4) - and is a better CI-gate story to mention than a
+  clone-and-build `run`.
 - **Link the role vocabulary, once `identigon/identigon` publishes it as a docs page** (tracked
   there). Today "see the role vocabulary" in the scaffold-output example (Getting Started §2/§3)
   points at nothing public — `ColumnRole`'s nine usable values and five reserved-and-fail-fast
