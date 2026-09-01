@@ -54,15 +54,6 @@ a small, standard workflow.
 
 ## Roadmap
 
-- **Link the role vocabulary, once `identigon/identigon` publishes it as a docs page** (tracked
-  there). Today "see the role vocabulary" in the scaffold-output example (Getting Started §2/§3)
-  points at nothing public — `ColumnRole`'s nine usable values and five reserved-and-fail-fast
-  values currently exist only as Javadoc.
-- **Link downloads for `identigon.jar` (the effigies CLI), `alterego.jar` and `incognito.jar`,
-  once `identigon/identigon` builds the publishing step** (decided in ADR-0028 there: GitHub
-  Packages plus mirrored, attested GitHub Release assets - not yet implemented). Getting Started
-  currently assumes a clone-and-build; a direct, unauthenticated download would shorten that
-  considerably.
 - Generated reference docs (Javadoc for `alterego`/`incognito`) published from
   `identigon/identigon`'s own CI and linked in from here, once that exists — not copied into this
   repo (see "Decisions" above).

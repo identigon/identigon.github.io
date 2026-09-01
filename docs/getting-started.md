@@ -27,9 +27,13 @@ in the monorepo.
   pg_dump --schema-only --no-owner --no-privileges -d source_db > schema.sql
   psql -d target_db -f schema.sql
   ```
-- A clone of [identigon/identigon](https://github.com/identigon/identigon), built with
-  `./gradlew build` — this produces a single runnable jar, `identigon.jar` (under
-  `effigies/build/libs/`)
+- `identigon.jar`, the runnable CLI. Either build it yourself — clone
+  [identigon/identigon](https://github.com/identigon/identigon) and run `./gradlew build` (produces
+  it under `effigies/build/libs/`) — or skip the build and download the prebuilt jar directly from
+  the
+  [latest release](https://github.com/identigon/identigon/releases/latest/download/identigon.jar).
+  The commands below assume `effigies/build/libs/identigon.jar`; adjust the path if you downloaded
+  it instead.
 
 ## 1. Discover the schema
 
@@ -74,7 +78,9 @@ java -jar build/libs/identigon.jar scaffold \
 ```
 
 **Produces:** a `policy.draft.yaml` file, one entry per table/column, every `role:` left blank — a
-suggestion in the comment where a heuristic matched, a pointer to the role vocabulary where none
+suggestion in the comment where a heuristic matched, a pointer to the
+[role vocabulary](https://github.com/identigon/identigon/blob/main/docs/spec/incognito.md#41-column-roles---transformation)
+(the nine usable `ColumnRole` values, plus five reserved ones that parse but fail fast) where none
 did:
 
 ```yaml
@@ -82,28 +88,36 @@ tables:
   customer:
     columns:
       id: # type: BIGINT, pk
-        role: # TODO classify — see the role vocabulary; run fails closed until filled
+        role: # TODO classify (Suggestion: PRIMARY_KEY, structurally discovered - not a guess)
+        surrogateStrategy: # TODO if PRIMARY_KEY (Suggestion: SEQUENTIAL_LONG)
       first_name: # type: VARCHAR
         role: # TODO classify (Suggestion: DIRECT_ID based on NAME_PATTERN)
+        directIdStrategy: # TODO if DIRECT_ID (Suggestion: ALTEREGO_NAME)
       email: # type: VARCHAR
         role: # TODO classify (Suggestion: DIRECT_ID based on EMAIL_PATTERN)
+        directIdStrategy: # TODO if DIRECT_ID (Suggestion: ALTEREGO_EMAIL)
       postcode: # type: VARCHAR
         role: # TODO classify (Suggestion: QUASI_ID based on POSTCODE_PATTERN)
+        directIdStrategy: # TODO if QUASI_ID (Suggestion: ALTEREGO_POSTCODE)
   orders:
     columns:
       id: # type: BIGINT, pk
-        role: # TODO classify — see the role vocabulary; run fails closed until filled
+        role: # TODO classify (Suggestion: PRIMARY_KEY, structurally discovered - not a guess)
+        surrogateStrategy: # TODO if PRIMARY_KEY (Suggestion: SEQUENTIAL_LONG)
       customer_id: # type: BIGINT, fk -> customer
-        role: # TODO classify — see the role vocabulary; run fails closed until filled
+        role: # TODO classify (Suggestion: FOREIGN_KEY -> customer, structurally discovered - not a guess)
+        references: # TODO if FOREIGN_KEY (Suggestion: {table: customer, column: id})
       total: # type: NUMERIC
         role: # TODO classify — see the role vocabulary; run fails closed until filled
       created_at: # type: TIMESTAMP
         role: # TODO classify — see the role vocabulary; run fails closed until filled
 ```
 
-Note that `id` and `customer_id` get no suggestion, even though they're structurally a primary key
-and a foreign key — the heuristics only look at column _names_, not constraints. You still have to
-classify those explicitly (`PRIMARY_KEY` / `FOREIGN_KEY`); nothing here is assumed for you.
+`id` and `customer_id` actually get the _most_ confident kind of suggestion here, not none: a real
+primary-key/foreign-key constraint is a structural fact, checked before any name-based heuristic
+runs, so it's labelled "structurally discovered - not a guess" rather than a `_PATTERN`-based guess
+like `first_name`/`email`/`postcode` above. Either way, nothing is assigned for you — every `role:`
+is still left blank, yours to fill in explicitly.
 
 ## 3. Author the policy
 
@@ -130,8 +144,10 @@ tables:
         role: PRIMARY_KEY
       first_name:
         role: DIRECT_ID
+        directIdStrategy: ALTEREGO_NAME
       email:
         role: DIRECT_ID
+        directIdStrategy: ALTEREGO_EMAIL
       postcode:
         role: QUASI_ID
   orders:
@@ -145,6 +161,12 @@ tables:
       created_at:
         role: PAYLOAD
 ```
+
+A `DIRECT_ID` column must name a `directIdStrategy` too, not just the role — a bare
+`role: DIRECT_ID` fails closed exactly like an unclassified column does (`ALTEREGO_GENERIC` is a
+valid choice, but not a silent one). Try deleting one of the two `directIdStrategy:` lines above and
+running [`validate`](#_4-validate-the-policy) against it, to see that diagnostic for yourself before
+moving on.
 
 ## 4. Validate the policy
 
