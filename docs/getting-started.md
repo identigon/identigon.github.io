@@ -51,6 +51,9 @@ java -jar effigies/build/libs/identigon.jar discover \
 with every column annotated by type and, where relevant, `pk` / `fk -> <table>`:
 
 ```text
+(Types shown are JDBC's own names, not necessarily the database's - e.g. PostgreSQL's BOOLEAN
+reports here as BIT, and TEXT as VARCHAR.)
+
 Table: customer
   id (type: BIGINT, pk)
   first_name (type: VARCHAR)
@@ -84,6 +87,9 @@ suggestion in the comment where a heuristic matched, a pointer to the
 did:
 
 ```yaml
+# The `type:` shown against each column below is JDBC's own name, not necessarily the
+# database's - e.g. PostgreSQL's BOOLEAN reports here as JDBC's BIT, and TEXT as VARCHAR.
+# Still a reliable input for choosing a strategy, just not identical to what the DDL says.
 tables:
   customer:
     columns:
