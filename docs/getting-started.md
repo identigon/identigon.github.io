@@ -43,7 +43,7 @@ metadata only; no row values are ever read at this step.
 
 ```sh
 export IDENTIGON_SOURCE_PASSWORD="secret"
-java -jar build/libs/identigon.jar discover \
+java -jar effigies/build/libs/identigon.jar discover \
   --source-url "jdbc:postgresql://..." --source-user "admin"
 ```
 
@@ -72,7 +72,7 @@ ending in `email` suggests `DIRECT_ID`) and leaves the suggestion as a comment â
 you have a head start without anything being silently classified on your behalf.
 
 ```sh
-java -jar build/libs/identigon.jar scaffold \
+java -jar effigies/build/libs/identigon.jar scaffold \
   --source-url "jdbc:postgresql://..." --source-user "admin" \
   --out ./policy.draft.yaml
 ```
@@ -183,7 +183,7 @@ schema, without needing a target database at all.
 
 ```sh
 export IDENTIGON_SOURCE_PASSWORD="secret"
-java -jar build/libs/identigon.jar validate \
+java -jar effigies/build/libs/identigon.jar validate \
   --policy ./policy.yaml \
   --source-url "jdbc:postgresql://..." --source-user "admin"
 ```
@@ -212,7 +212,7 @@ export IDENTIGON_TARGET_PASSWORD="secret"
 # Only required when policy.yaml sets saltMode: persistent or reproducible
 export IDENTIGON_SALT="my-secret-salt-bytes"
 
-java -jar build/libs/identigon.jar run \
+java -jar effigies/build/libs/identigon.jar run \
   --policy ./policy.yaml \
   --source-url "jdbc:postgresql://..." --source-user "admin" \
   --target-url "jdbc:postgresql://..." --target-user "admin"
