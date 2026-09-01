@@ -146,7 +146,34 @@ tables:
         role: PAYLOAD
 ```
 
-## 4. Run
+## 4. Validate the policy
+
+**Why:** a cheap pre-flight check before committing to a full `run` — it re-checks the policy
+against the _current_ source schema (no target connection, no data movement) using the same
+fail-closed diagnostics `run` would raise, so a schema migration that leaves the policy stale is
+caught immediately rather than mid-run. It's also a better CI-gate story than a clone-and-build
+`run`: wire this into a pipeline to fail a PR the moment `policy.yaml` drifts from the source
+schema, without needing a target database at all.
+
+```sh
+export IDENTIGON_SOURCE_PASSWORD="secret"
+java -jar build/libs/identigon.jar validate \
+  --policy ./policy.yaml \
+  --source-url "jdbc:postgresql://..." --source-user "admin"
+```
+
+`--policy` defaults to `./policy.yaml` if omitted; `--source-url` and `--source-user` are required.
+
+**Produces:** nothing is written to a file — a one-line confirmation on success:
+
+```text
+Policy is valid against 2 discovered table(s).
+```
+
+An invalid policy (e.g. a column the schema now has that the policy doesn't classify) exits
+non-zero with the same fail-closed diagnostic `run` would raise, printed to stderr instead.
+
+## 5. Run
 
 **Why:** this is the actual anonymisation — a deterministic, model-free execution against the
 now-finished policy. Nothing judgment-shaped happens here; if the policy is valid, the run is fully
@@ -178,7 +205,7 @@ Rows processed: 1245
 DPIA artefact written to ./dpia-report.html, ./dpia-report.json and ./dpia-report.md
 ```
 
-## 5. Review the DPIA report
+## 6. Review the DPIA report
 
 **Why:** a run completing without error isn't proof the classification was right — this is the
 safety net that lets you (or a reviewer) actually check. It records referential integrity, the
