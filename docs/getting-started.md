@@ -150,6 +150,7 @@ tables:
         directIdStrategy: ALTEREGO_EMAIL
       postcode:
         role: QUASI_ID
+        directIdStrategy: ALTEREGO_POSTCODE
   orders:
     columns:
       id:
@@ -164,9 +165,12 @@ tables:
 
 A `DIRECT_ID` column must name a `directIdStrategy` too, not just the role — a bare
 `role: DIRECT_ID` fails closed exactly like an unclassified column does (`ALTEREGO_GENERIC` is a
-valid choice, but not a silent one). Try deleting one of the two `directIdStrategy:` lines above and
-running [`validate`](#_4-validate-the-policy) against it, to see that diagnostic for yourself before
-moving on.
+valid choice, but not a silent one). The same rule applies to `postcode` above even though its role
+is `QUASI_ID`: `SYNTHESISE` on a character-type column is shape-preserving fabrication with no
+fictionality guarantee unless it's paired with a `directIdStrategy` hint — `ALTEREGO_GENERIC` is
+still a valid, explicit choice, just not a silent default. Try deleting one of the three
+`directIdStrategy:` lines above and running [`validate`](#_4-validate-the-policy) against it, to see
+that diagnostic for yourself before moving on.
 
 ## 4. Validate the policy
 
