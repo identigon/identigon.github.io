@@ -242,7 +242,11 @@ DPIA artefact written to ./dpia-report.html, ./dpia-report.json and ./dpia-repor
 **Why:** a run completing without error isn't proof the classification was right — this is the
 safety net that lets you (or a reviewer) actually check. It records referential integrity, the
 transformation applied per column, any misdeclaration-lint or structural-uniqueness findings, and a
-handful of illustrative synthetic sample rows, so nobody has to trust the run blind.
+handful of illustrative synthetic sample rows, so nobody has to trust the run blind. Each column
+also gets its own `Fictionality Verified` field — `yes` when a typed guarantee was actually checked
+against the target (e.g. `postcode` above), `—` when the column's strategy carries no such check to
+run — a finer-grained companion to the table-level flag, which only says no verification _failed_,
+not that every column was checked.
 
 **Produces:** the same report in three formats, generated from the run above —
 
