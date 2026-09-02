@@ -163,6 +163,7 @@ tables:
         role: PRIMARY_KEY
       customer_id:
         role: FOREIGN_KEY
+        references: { table: customer, column: id }
       total:
         role: PAYLOAD
       created_at:
@@ -176,7 +177,9 @@ is `QUASI_ID`: `SYNTHESISE` on a character-type column is shape-preserving fabri
 fictionality guarantee unless it's paired with a `directIdStrategy` hint — `ALTEREGO_GENERIC` is
 still a valid, explicit choice, just not a silent default. Try deleting one of the three
 `directIdStrategy:` lines above and running [`validate`](#_4-validate-the-policy) against it, to see
-that diagnostic for yourself before moving on.
+that diagnostic for yourself before moving on. A `FOREIGN_KEY` column needs its `references` block
+too, naming the parent table and column, so the loader can translate the surrogate key on the other
+side once that table has been cloned.
 
 ## 4. Validate the policy
 
