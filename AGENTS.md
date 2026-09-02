@@ -3,8 +3,24 @@
 The public-facing site for the Identigon project, at <https://identigon.org> (identigon.github.io
 also resolves but isn't canonical — see "Custom domain"). Built with
 [VitePress](https://vitepress.dev/). Separate repo from `identigon/identigon` (the
-alterego/incognito/effigies monorepo) — see [`README.md`'s Decisions section](README.md#decisions)
+alterego/incognito/effigies monorepo) — see that repo's
+[`docs/adr/0034-identigon-github-io-as-a-separate-repository.md`](https://github.com/identigon/identigon/blob/main/docs/adr/0034-identigon-github-io-as-a-separate-repository.md)
 for why; don't merge the two, or move content between them, without a real decision.
+
+## Documentation
+
+Decisions and backlog for this repo live in `identigon/identigon` now, not here — see
+[`DOC-MAP.md`](https://github.com/identigon/identigon/blob/main/DOC-MAP.md) there and
+`docs/adr/0033-extend-documentation-coverage-to-identigon-github-io.md`. Before writing a decision
+or a backlog item down:
+
+- A real choice (a rejected alternative worth naming) → an ADR in `identigon/identigon`'s
+  `docs/adr/`.
+- Outstanding work → an entry in `identigon/identigon`'s `PLAN.md`, tagged
+  `**Project:** identigon.github.io`.
+
+This file stays limited to what's genuinely local to this repo: build/deploy commands, and the
+operational hazards below that only make sense standing inside it.
 
 ## What lives here
 
@@ -14,11 +30,10 @@ for why; don't merge the two, or move content between them, without a real decis
 - `docs/public/CNAME` — the custom domain marker; see "Custom domain" before touching it.
 
 `docs/` is VitePress's `srcDir` — every `.md` file under it becomes a public page, linked or not.
-Keep it to hand-written guide content; decisions and outstanding work belong in `README.md`'s
-`## Decisions` / `## Roadmap` sections, however doc-kit-shaped a `docs/` subtree might look.
+Keep it to hand-written guide content only — see "Documentation" above for decisions/backlog.
 
 Generated reference material (Javadoc, etc.) isn't duplicated here — published from
-`identigon/identigon`'s CI and linked to (see README.md's Decisions).
+`identigon/identigon`'s CI and linked to once that exists (tracked in that repo's `PLAN.md`).
 
 ## Accuracy
 
