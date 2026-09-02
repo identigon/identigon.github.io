@@ -229,6 +229,19 @@ java -jar effigies/build/libs/identigon.jar run \
 
 Credentials and salt bytes come from the environment, never from the policy file itself.
 
+`run` refuses to start if any table it would load into already has rows — pointing it at the wrong
+database (a mistyped `--target-url`, most plausibly) is otherwise silently destructive: a failed run
+rolls back by deleting every row it touched, which would take pre-existing data with it. `--force`
+overrides this once you've confirmed the target is genuinely meant to be emptied:
+
+```text
+Error executing pipeline: org.identigon.incognito.api.IncognitoException$ConfigException:
+Fail-closed: 1 target table(s) already have data - run only loads into an empty target, and a
+failed run deletes existing rows during compensation:
+  - 'customer' has 1 row(s)
+Point at an empty target, or pass --force if you accept that risk.
+```
+
 **Produces:** the anonymised clone, loaded into the target database — plus a short summary and three
 DPIA report files written to the working directory:
 
