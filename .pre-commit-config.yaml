@@ -4,6 +4,14 @@
 repos:
   - repo: local
     hooks:
+      # embeddedLanguageFormatting: "off" in .prettierrc.json is load-bearing, not cosmetic:
+      # Prettier's default ("auto") tries to reformat recognised-language content INSIDE fenced
+      # code blocks too, and on a YAML flow-mapping followed by a trailing `#` comment
+      # (`key: { ... }  # comment`) that corrupts it - dropped keys, emptied `{ }` blocks - found in
+      # identigon/identigon's own docs during that repo's Prettier adoption
+      # (docs/adr/0036-adopt-prettier-for-markdown-alongside-markdownlint-cli2.md there). This
+      # repo's current YAML examples don't happen to use that exact pattern, but there's no reason
+      # to leave the landmine armed for the next edit that does.
       - id: prettier-format
         name: Prettier (auto-format Markdown)
         language: system
