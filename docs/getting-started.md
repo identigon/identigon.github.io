@@ -10,8 +10,7 @@ The schema used below (`customer`/`orders`, lower case — Postgres folds unquot
 lower case, so that's what you'll see even if you write `CREATE TABLE CUSTOMER`) is illustrative, to
 keep each step's output short. For a small, real, copy-pasteable schema you can run through every
 step yourself right now — DDL, seed data, and a finished `policy.yaml` included — see
-[`quickstart/`](https://github.com/identigon/identigon/tree/main/quickstart)
-in the monorepo.
+[`quickstart/`](https://github.com/identigon/identigon/tree/main/quickstart) in the monorepo.
 
 ## Prerequisites
 
@@ -21,7 +20,7 @@ in the monorepo.
   FK/trigger isolation). Other JDBC-accessible databases can be reached through a generic-ANSI
   fallback path, but it's untested — treat it as "might work," not "supported." For PostgreSQL,
   produce the target with `pg_dump --schema-only --no-owner --no-privileges`, then load that into an
-  empty database — leaving out `--schema-only` is silently catastrophic, since `run` loads *into*
+  empty database — leaving out `--schema-only` is silently catastrophic, since `run` loads _into_
   the target rather than replacing it:
   ```sh
   pg_dump --schema-only --no-owner --no-privileges -d source_db > schema.sql
@@ -34,6 +33,10 @@ in the monorepo.
   [latest release](https://github.com/identigon/identigon/releases/latest/download/identigon.jar).
   The commands below assume `effigies/build/libs/identigon.jar`; adjust the path if you downloaded
   it instead.
+
+Two more commands sit alongside the four walked through below: `identigon.jar version` prints the
+running build's version (worth including in a bug report), and `identigon.jar help` (also the
+default with no arguments) lists every command with a one-line description.
 
 ## 1. Discover the schema
 
@@ -114,9 +117,9 @@ tables:
         role: # TODO classify (Suggestion: FOREIGN_KEY -> customer, structurally discovered - not a guess)
         references: # TODO if FOREIGN_KEY (Suggestion: {table: customer, column: id})
       total: # type: NUMERIC
-        role: # TODO classify — see the role vocabulary; run fails closed until filled
+        role: # TODO classify - see docs/spec/incognito.md §4.1 for the full ColumnRole vocabulary; run fails closed until filled
       created_at: # type: TIMESTAMP
-        role: # TODO classify — see the role vocabulary; run fails closed until filled
+        role: # TODO classify - see docs/spec/incognito.md §4.1 for the full ColumnRole vocabulary; run fails closed until filled
 ```
 
 `id` and `customer_id` actually get the _most_ confident kind of suggestion here, not none: a real
@@ -185,10 +188,13 @@ side once that table has been cloned.
 
 **Why:** a cheap pre-flight check before committing to a full `run` — it re-checks the policy
 against the _current_ source schema (no target connection, no data movement) using the same
-fail-closed diagnostics `run` would raise, so a schema migration that leaves the policy stale is
-caught immediately rather than mid-run. It's also a better CI-gate story than a clone-and-build
-`run`: wire this into a pipeline to fail a PR the moment `policy.yaml` drifts from the source
-schema, without needing a target database at all.
+fail-closed diagnostics `run` would raise for that same check, so a schema migration that leaves the
+policy stale is caught immediately rather than mid-run. That's everything `run` checks about the
+policy against the source schema; target state (e.g. whether the target already has rows) is only
+ever checked at `run` time, since `validate` never connects to one — a green `validate` is not a
+guarantee `run` will succeed. It's still a better CI-gate story than a clone-and-build `run`: wire
+this into a pipeline to fail a PR the moment `policy.yaml` drifts from the source schema, without
+needing a target database at all.
 
 ```sh
 export IDENTIGON_SOURCE_PASSWORD="secret"
@@ -205,8 +211,8 @@ java -jar effigies/build/libs/identigon.jar validate \
 Policy is valid against 2 discovered table(s).
 ```
 
-An invalid policy (e.g. a column the schema now has that the policy doesn't classify) exits
-non-zero with the same fail-closed diagnostic `run` would raise, printed to stderr instead.
+An invalid policy (e.g. a column the schema now has that the policy doesn't classify) exits non-zero
+with the same fail-closed diagnostic `run` would raise, printed to stderr instead.
 
 ## 5. Run
 
@@ -232,13 +238,17 @@ Credentials and salt bytes come from the environment, never from the policy file
 `run` refuses to start if any table it would load into already has rows — pointing it at the wrong
 database (a mistyped `--target-url`, most plausibly) is otherwise silently destructive: a failed run
 rolls back by deleting every row it touched, which would take pre-existing data with it. `--force`
-overrides this once you've confirmed the target is genuinely meant to be emptied:
+skips this check — it does not empty the target for you. If the existing rows collide (the common
+case), the run still fails and compensation deletes them anyway; `--force` is for a target you know
+won't collide (partially populated, or tables outside the policy), having accepted that a failure
+will still clear it. To re-run cleanly against the same target, truncate it first:
 
 ```text
 Error executing pipeline: org.identigon.incognito.api.IncognitoException$ConfigException:
-Fail-closed: 1 target table(s) already have data - run only loads into an empty target, and a
+Fail-closed: 2 target table(s) already have data - run only loads into an empty target, and a
 failed run deletes existing rows during compensation:
   - 'customer' has 1 row(s)
+  - 'orders' has 1 row(s)
 Point at an empty target, or pass --force if you accept that risk.
 ```
 
@@ -278,8 +288,9 @@ not that every column was checked.
 | :-------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `ephemeral` (default) | A fresh random salt per run, destroyed on completion. Irreversible and unlinkable — nobody, including you, can map a fabricated value back to the original. |
 | `persistent`          | A fixed, caller-supplied salt (`IDENTIGON_SALT`). Repeatable across runs, but linkable — forfeits irreversibility.                                          |
-| `reproducible`        | A fixed salt and RNG seed (`IDENTIGON_SEED`). Byte-for-byte identical output on every run — for test fixtures.                                              |
+| `reproducible`        | A fixed salt (`IDENTIGON_SALT`) and RNG seed (`IDENTIGON_SEED`). Byte-for-byte identical output on every run — for test fixtures.                           |
 
 `IDENTIGON_SALT` must be at least 16 bytes for `persistent` and `reproducible` modes (the
-`"my-secret-salt-bytes"` example above is 20 bytes, comfortably over). The salt is never logged, and
-never appears in the policy file itself.
+`"my-secret-salt-bytes"` example above is 20 bytes, comfortably over). `IDENTIGON_SEED` is optional
+for `reproducible` mode and defaults to `0` if unset. The salt is never logged, and never appears in
+the policy file itself.

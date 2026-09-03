@@ -5,7 +5,7 @@ hero:
   name: "Identigon"
   text: "Anonymise a database, credibly."
   tagline:
-    Deterministic pseudonymisation and privacy-preserving database cloning — for test, staging, and
+    Deterministic anonymisation and privacy-preserving database cloning — for test, staging, and
     demo environments that need real-looking data without real PII.
   actions:
     - theme: brand
@@ -22,8 +22,8 @@ features:
       copied through unclassified, inference only ever suggests.
   - title: Deterministic & reproducible
     details:
-      The same source value and salt always fabricate to the same fictional value — no randomness,
-      no drift between runs, byte-for-byte repeatable when you need it to be.
+      Given a fixed salt, the same source value always fabricates to the same fictional value — no
+      randomness, no drift between runs, byte-for-byte repeatable when you need it to be.
   - title: Guaranteed-fictional output
     details:
       Fabricated values land in officially reserved or structurally-impossible ranges wherever one
