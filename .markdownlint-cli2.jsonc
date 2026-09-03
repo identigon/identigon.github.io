@@ -1,0 +1,33 @@
+{
+  // Mirrors identigon/identigon's own .markdownlint-cli2.jsonc - see that file's comments for the
+  // full reasoning; kept here only where this repo's config differs or the rationale is worth
+  // restating briefly. Full default rule set, "default" omitted since true is markdownlint's own
+  // default. MD013 matches this repo's own .prettierrc.json printWidth (100), with tables and code
+  // blocks exempt (no sensible way to "wrap" either without corrupting them) and headings exempt
+  // (one line by construction). `stern` catches an ordinary prose line with one long trailing word,
+  // without flagging a line that is purely one unbreakable token (a bare URL on its own line).
+  // MD024 (no-duplicate-heading) uses `siblings_only` for parity with the sibling repo - this
+  // repo has no CHANGELOG.md of its own to trigger the case that setting exists for, but nothing
+  // here depends on the stricter document-wide default either.
+  "config": {
+    "MD013": {
+      "line_length": 100,
+      "code_blocks": false,
+      "tables": false,
+      "headings": false,
+      "stern": true
+    },
+    "MD024": {
+      "siblings_only": true
+    },
+    // VitePress's own heading-anchor slugifier (markdown-it-anchor via @mdit-vue) prefixes a
+    // heading that starts with a digit with `_` (confirmed against this repo's real built output:
+    // "## 4. Validate the policy" -> id="_4-validate-the-policy") - not the GitHub-style slug
+    // MD051 assumes, which would leave the leading digit unprefixed. A real same-page anchor link
+    // to a numbered heading (getting-started.md has several) will always look "invalid" to this
+    // rule even when it is the correct id for the actual site. Verified instead by building the
+    // site and checking the real generated id, which is the stronger check anyway - it validates
+    // against the actual rendering engine, not a guessed slugify algorithm.
+    "MD051": false
+  }
+}

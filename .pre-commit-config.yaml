@@ -1,6 +1,12 @@
 # Minimal code-hygiene hooks, mirroring identigon/identigon's own .pre-commit-config.yaml --
 # trimmed to what applies to a static site, not a Gradle/Java build. Run with `prek` or
 # `pre-commit`.
+#
+# `prek install` (and `pre-commit install`) wire only the pre-commit hook type unless told
+# otherwise, which would leave the commit-msg hook below installed but never invoked. Declaring the
+# types here means a plain `prek install` is enough - nobody has to remember `--hook-type`.
+default_install_hook_types: [pre-commit, commit-msg]
+
 repos:
   - repo: local
     hooks:
@@ -19,6 +25,17 @@ repos:
         pass_filenames: true
         types: [markdown]
 
+  # Structural rules Prettier doesn't check at all (MD024 duplicate headings, MD032 list spacing,
+  # MD060 table style, and the rest of the enabled default rule set) - complements the formatter
+  # above rather than overlapping it, same split as identigon/identigon's own pre-commit config
+  # (see docs/adr/0036-adopt-prettier-for-markdown-alongside-markdownlint-cli2.md there). MD013
+  # (line length) has no auto-fix in any markdownlint implementation, so this only catches a
+  # >100-column line; Prettier's own proseWrap: "always" is what actually fixes it.
+  - repo: https://github.com/DavidAnson/markdownlint-cli2
+    rev: v0.23.2
+    hooks:
+      - id: markdownlint-cli2
+
   # Secret scanning -- apt for a repo that will eventually link out to, and quote from, a privacy
   # pipeline where a salt or connection string must never be committed.
   - repo: https://github.com/gitleaks/gitleaks
@@ -33,3 +50,35 @@ repos:
       - id: end-of-file-fixer
       - id: check-yaml
       - id: check-added-large-files
+      - id: check-merge-conflict
+      # This repo deliberately uses the British spelling (LICENCE) - a near miss with LICENSE that
+      # would collide silently on Windows/macOS's case-insensitive filesystems, same reasoning as
+      # identigon/identigon's own use of this hook.
+      - id: check-case-conflict
+      # No shell script in this repo today, but harmless and future-proofs against one committed
+      # without the executable bit (fine on Windows, `./script.sh` then fails on Linux/macOS) -
+      # matches identigon/identigon's own hook set.
+      - id: check-shebang-scripts-are-executable
+      # .gitattributes already pins eol=lf; this guards against that being weakened rather than
+      # being the fix for it.
+      - id: mixed-line-ending
+        args: [--fix=lf]
+
+  # Automates a Conventional Commits discipline already followed by hand throughout this repo's
+  # history - mirrors identigon/identigon's own use of this hook (see the comment there for the
+  # Python-vs-Node-commitlint reasoning). Allowed types checked against this repo's own real
+  # history (`git log --format=%s`): `build`/`docs`/`fix` are the only types actually used past
+  # this repo's first few commits (one early `chore:`, never repeated). `feat`/`refactor`/`ci` are
+  # included too - not yet used, but plausible for a site that will grow (a new page, a
+  # restructure, a workflow change). `chore` and `test` are included by request, despite neither
+  # being current convention here (no test suite exists for `test` to describe; `chore` was used
+  # only in this repo's first few commits).
+  #
+  # This checks the *shape* of a subject, not whether the type is the right one, and accepts
+  # `Feat:` - there is no case-sensitivity option, and --strict only blocks fixup and merge commits.
+  - repo: https://github.com/compilerla/conventional-pre-commit
+    rev: v4.4.0
+    hooks:
+      - id: conventional-pre-commit
+        stages: [commit-msg]
+        args: [build, chore, ci, docs, feat, fix, refactor, test]

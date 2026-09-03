@@ -22,10 +22,12 @@ step yourself right now — DDL, seed data, and a finished `policy.yaml` include
   produce the target with `pg_dump --schema-only --no-owner --no-privileges`, then load that into an
   empty database — leaving out `--schema-only` is silently catastrophic, since `run` loads _into_
   the target rather than replacing it:
+
   ```sh
   pg_dump --schema-only --no-owner --no-privileges -d source_db > schema.sql
   psql -d target_db -f schema.sql
   ```
+
 - `identigon.jar`, the runnable CLI. Either build it yourself — clone
   [identigon/identigon](https://github.com/identigon/identigon) and run `./gradlew build` (produces
   it under `effigies/build/libs/`) — or skip the build and download the prebuilt jar directly from
