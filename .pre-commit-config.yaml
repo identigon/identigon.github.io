@@ -18,7 +18,7 @@ repos:
       # (docs/adr/0036-adopt-prettier-for-markdown-alongside-markdownlint-cli2.md there). This
       # repo's current YAML examples don't happen to use that exact pattern, but there's no reason
       # to leave the landmine armed for the next edit that does.
-      - id: prettier-format
+      - id: prettier-markdown
         name: Prettier (auto-format Markdown)
         language: system
         entry: npx --yes prettier@3.9.6 --write

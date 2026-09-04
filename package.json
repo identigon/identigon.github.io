@@ -10,7 +10,7 @@
     "format:check": "prettier --check \"**/*.md\""
   },
   "devDependencies": {
-    "prettier": "^3.9.6",
+    "prettier": "3.9.6",
     "vitepress": "^1.6.4"
   }
 }
