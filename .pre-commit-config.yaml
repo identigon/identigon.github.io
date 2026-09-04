@@ -74,6 +74,24 @@ repos:
       - id: mixed-line-ending
         args: [--fix=lf]
 
+  # Link rot, on demand only: `prek run --hook-stage manual lychee` (or `pre-commit run
+  # --hook-stage manual lychee`). Deliberately NOT on commit - external hosts fail for reasons
+  # unrelated to the change under review, and a hook that blocks a commit because someone else's
+  # server is down is a hook that gets bypassed. `.github/workflows/link-check.yml` runs the same
+  # flags nightly, scoped to docs/, which is where routine rot detection belongs; this manual stage
+  # covers the whole repo and is for checking a link-heavy change before it's committed, not a
+  # stand-in for CI. Same rev and args as identigon/identigon's, play-bazlang's, and doc-kit's own
+  # .pre-commit-config.yaml.
+  # --method get, not the default HEAD: some hosts answer HEAD with an error and GET with 200, so
+  # a HEAD-based sweep can report false failures. Needs lychee on PATH (`scoop install lychee`,
+  # `brew install lychee`, or a release binary).
+  - repo: https://github.com/lycheeverse/lychee
+    rev: lychee-v0.24.2
+    hooks:
+      - id: lychee-system
+        stages: [manual]
+        args: [--no-progress, --method, get, --max-concurrency, "4"]
+
   # Automates a Conventional Commits discipline already followed by hand throughout this repo's
   # history - mirrors identigon/identigon's own use of this hook (see the comment there for the
   # Python-vs-Node-commitlint reasoning). Allowed types checked against this repo's own real
