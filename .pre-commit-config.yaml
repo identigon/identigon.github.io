@@ -21,7 +21,7 @@ repos:
       - id: prettier-format
         name: Prettier (auto-format Markdown)
         language: system
-        entry: npx prettier --write
+        entry: npx --yes prettier@3.9.6 --write
         pass_filenames: true
         types: [markdown]
 
