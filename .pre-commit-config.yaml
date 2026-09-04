@@ -100,7 +100,9 @@ repos:
   # included too - not yet used, but plausible for a site that will grow (a new page, a
   # restructure, a workflow change). `chore` and `test` are included by request, despite neither
   # being current convention here (no test suite exists for `test` to describe; `chore` was used
-  # only in this repo's first few commits).
+  # only in this repo's first few commits). `perf` is included by request too, matching
+  # play-bazlang's own list and identigon/identigon's now-updated one - not yet used here either,
+  # but plausible for a site (a build-time or asset-loading change worth calling out as such).
   #
   # This checks the *shape* of a subject, not whether the type is the right one, and accepts
   # `Feat:` - there is no case-sensitivity option, and --strict only blocks fixup and merge commits.
@@ -109,4 +111,4 @@ repos:
     hooks:
       - id: conventional-pre-commit
         stages: [commit-msg]
-        args: [build, chore, ci, docs, feat, fix, refactor, test]
+        args: [build, chore, ci, docs, feat, fix, perf, refactor, test]
