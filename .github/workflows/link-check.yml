@@ -17,5 +17,10 @@ jobs:
       - uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
         with:
           # --method get, not the default HEAD: some hosts error on HEAD but answer GET.
-          args: --no-progress --method get --max-concurrency 4 "docs/**/*.md"
+          # --root-dir: VitePress's srcDir (docs/) is the site root, so root-relative links like
+          # /getting-started#salt-modes resolve to docs/getting-started.md. lychee needs an
+          # absolute path here.
+          # --fallback-extensions: root-relative links omit the .md extension (VitePress strips it
+          # for clean URLs), so lychee needs to try it when the extension-less path doesn't exist.
+          args: --no-progress --method get --max-concurrency 4 --root-dir "$GITHUB_WORKSPACE/docs" --fallback-extensions md "docs/**/*.md"
           fail: true
